@@ -35,7 +35,17 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
       return res.status(400).send(`image_url is required`);
     }
 
-    return res.status(200).send("success");
+    filterImageFromURL(image_url)
+      .then(filteredpath => {
+        return res.status(200).sendFile(filteredpath, function(err) {
+          if (!err) {
+            deleteLocalFiles([filteredpath]);
+          }
+        });
+      })
+      .catch(() => {
+        return res.status(400).send(`error`);
+      });
   });
 
   //! END @TODO1
